@@ -4,7 +4,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as Joi from 'joi';
 
-import { Restaurant } from './restaurants/entity/restaurant.entity';
+import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { RestaurantsModule } from './restaurants/restaurants.module';
 
 @Module({
