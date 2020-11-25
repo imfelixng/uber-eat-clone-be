@@ -1,5 +1,5 @@
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
-import { IsBoolean, IsNotEmpty, IsOptional, IsString, Length, Min } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsOptional, IsString, Length } from "class-validator";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @InputType({ isAbstract: true }) // Make abstract to extending in DTO
