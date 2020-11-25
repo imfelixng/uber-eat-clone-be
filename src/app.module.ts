@@ -4,9 +4,9 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as Joi from 'joi';
 
-import { UserModule } from './user/user.module';
+import { UserModule } from './users/users.module';
 import { CommonModule } from './common/common.module';
-import { User } from './user/enities/user.entity';
+import { User } from './users/enities/user.entity';
 
 @Module({
   imports: [
