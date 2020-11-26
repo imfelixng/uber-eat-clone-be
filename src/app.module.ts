@@ -2,11 +2,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import * as Joi from 'joi';
+import { string as JoiString, object as JoiObject } from 'joi';
 
 import { UserModule } from './users/users.module';
 import { CommonModule } from './common/common.module';
 import { User } from './users/enities/user.entity';
+import { JwtModule } from './jwt/jwt.module';
 
 @Module({
   imports: [
@@ -14,14 +15,14 @@ import { User } from './users/enities/user.entity';
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV}`,
       ignoreEnvFile: process.env.NODE_ENV === 'prod',
-      validationSchema: Joi.object({
-        NODE_ENV: Joi.string().valid('dev', 'prod'),
-        DB_HOST: Joi.string().required(),
-        DB_PORT: Joi.string().required(),
-        DB_USERNAME: Joi.string().required(),
-        DB_PASSWORD: Joi.string().required(),
-        DB_NAME: Joi.string().required(),
-        SECRET_KEY: Joi.string().required()
+      validationSchema: JoiObject({
+        NODE_ENV: JoiString().valid('dev', 'prod'),
+        DB_HOST: JoiString().required(),
+        DB_PORT: JoiString().required(),
+        DB_USERNAME: JoiString().required(),
+        DB_PASSWORD: JoiString().required(),
+        DB_NAME: JoiString().required(),
+        PRIVATE_KEY: JoiString().required()
       })
     }),
     TypeOrmModule.forRoot({
@@ -39,7 +40,10 @@ import { User } from './users/enities/user.entity';
       autoSchemaFile: true,
     }),
     UserModule,
-    CommonModule
+    CommonModule,
+    JwtModule.forRoot({
+        privateKey: process.env.PRIVATE_KEY
+    }),
   ],
   controllers: [],
   providers: [],
