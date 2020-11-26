@@ -3,12 +3,13 @@ import { Injectable } from "@nestjs/common";
 import { Repository } from 'typeorm';
 import { User } from './enities/user.entity';
 import { CreateAccountInput } from './dtos/create-account.dto';
+import { LoginInput, LoginOutput } from './dtos/login.dto';
 
 @Injectable()
 export class UserService {
-    constructor(@InjectRepository(User) private readonly users: Repository<User>) {}
+    constructor(@InjectRepository(User) private readonly users: Repository<User>) { }
 
-    async createAccount({ email, password, role }: CreateAccountInput): Promise<{ok: boolean, error?: string}>{
+    async createAccount({ email, password, role }: CreateAccountInput): Promise<{ ok: boolean, error?: string }> {
         try {
             const exists = await this.users.findOne({ email });
             if (exists) {
@@ -18,13 +19,38 @@ export class UserService {
                 }
             }
 
-            await this.users.save(this.users.create({email, password, role }));
-            return {ok: true};
-        } catch(e) {
+            await this.users.save(this.users.create({ email, password, role }));
+            return { ok: true };
+        } catch (e) {
             return {
                 ok: false,
                 error: "Couldn't create account"
             };
+        }
+    }
+
+    async login({ email, password }: LoginInput): Promise<LoginOutput> {
+        try {
+            const user = await this.users.findOne({ email });
+            if (!user) {
+                throw new Error('User not found!');
+            }
+
+            const passwordCorrect = await user.checkPassword(password);
+            if (!passwordCorrect) {
+                throw new Error('Wrong password!');
+            }
+
+            return {
+                ok: true,
+                error: null,
+            }
+
+        } catch (e) {
+            return {
+                ok: false,
+                error: e,
+            }
         }
     }
 }
