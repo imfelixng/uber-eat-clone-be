@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { sign } from 'jsonwebtoken';
+import { sign, verify } from 'jsonwebtoken';
 
 import { JwtModuleOptions } from './jwt.interfaces';
 import { CONFIG_OPTIONS } from './jwt.contants';
@@ -12,5 +12,9 @@ export class JwtService {
     
     sign(userID: number): string {
         return sign({ id: userID }, this.options.privateKey);
+    }
+
+    verify(token: string): string | {[x: string]: any} {
+        return verify(token, this.options.privateKey);
     }
 }
