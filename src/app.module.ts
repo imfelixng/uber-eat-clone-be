@@ -5,11 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { string as JoiString, object as JoiObject } from 'joi';
 
 import { UserModule } from './users/users.module';
-import { CommonModule } from './common/common.module';
 import { User } from './users/enities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
-import { AuthModule } from './auth/auth.module';
+import { EmailModule } from './email/email.module';
+import { Verification } from './users/enities/verification.entity';
 
 @Module({
   imports: [
@@ -36,7 +36,7 @@ import { AuthModule } from './auth/auth.module';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: true,
-      entities: [User],
+      entities: [User, Verification],
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: true,
@@ -50,6 +50,7 @@ import { AuthModule } from './auth/auth.module';
       privateKey: process.env.PRIVATE_KEY
     }),
     UserModule,
+    EmailModule,
   ],
   controllers: [],
   providers: [],

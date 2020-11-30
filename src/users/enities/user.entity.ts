@@ -1,4 +1,4 @@
-import { BeforeInsert, Column, Entity } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity } from "typeorm";
 import { InternalServerErrorException } from "@nestjs/common";
 import { hash, compare, } from 'bcrypt';
 import { Field, InputType, ObjectType, registerEnumType } from "@nestjs/graphql";
@@ -33,9 +33,14 @@ export class User extends CoreEntity{
     @IsEnum(UserRole)
     role: UserRole;
 
+    @Column({ default: false })
+    @Field(type => Boolean)
+    verified: boolean;
 
     @BeforeInsert()
+    @BeforeUpdate()
     async hashPassword(): Promise<void> {
+        console.log('PASS: ' + this.password);
         try {
             this.password = await hash(this.password, 10);
         } catch (e) {
