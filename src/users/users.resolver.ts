@@ -9,6 +9,7 @@ import { AuthGuard } from "src/auth/auth.guard";
 import { AuthUser } from "src/auth/auth-user.decorator";
 import { UserProfileInput, UserProfileOutput } from "./dtos/user-profile.dto";
 import { EditProfileInput, EditProfileOutput } from "./dtos/edit-profile.dto";
+import { VerifiyEmailInput, VerifyEmailOutput } from "./dtos/verify-email.dto";
 
 @Resolver(of => User)
 export class UserResolver {
@@ -71,4 +72,17 @@ export class UserResolver {
             return { ok: false, error }
         }
     }
+
+    @Mutation(returns => VerifyEmailOutput)
+    async verifyEmail(@Args('input') verifyEmailInput: VerifiyEmailInput): Promise<VerifyEmailOutput>{
+        try {
+            const result = await this.userService.verifyEmail(verifyEmailInput.code);
+            return {
+                ok: result
+            }
+        } catch(error) {
+            return { ok: false, error }
+        }
+    }
+
 }
