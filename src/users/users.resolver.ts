@@ -23,66 +23,32 @@ export class UserResolver {
 
     @Query(returns => UserProfileOutput)
     @UseGuards(AuthGuard)
-    async userProfile(@Args() userProfileInput: UserProfileInput): Promise<UserProfileOutput> {
-        try {
-            const user = await this.userService.findById(userProfileInput.userId);
-
-            if (!user) throw Error();
-
-            return {
-                ok: true,
-                user,
-            }
-        } catch (e) {
-            return {
-                error: 'User not found!',
-                ok: false,
-            }
-        }
+    userProfile(@Args() userProfileInput: UserProfileInput): Promise<UserProfileOutput> {
+        return this.userService.findById(userProfileInput.userId);
     }
 
     @Mutation(returns => CreateAccountOutput)
     async createAccount(@Args('input') createAccountInput: CreateAccountInput): Promise<CreateAccountOutput> {
-        try {
-            return await this.userService.createAccount(createAccountInput);
-        } catch(error) {
-            return { ok: false, error }
-        }
+        return this.userService.createAccount(createAccountInput);
     }
 
     @Mutation(returns => LoginOutput)
     async login(@Args('input') loginInput: LoginInput): Promise<LoginOutput> {
-        try {
-            return await this.userService.login(loginInput);
-        } catch(error) {
-            return { ok: false, error }
-        }
+        return this.userService.login(loginInput);
     }
 
     @Mutation(returns => EditProfileOutput)
     @UseGuards(AuthGuard)
-    async editProfile(
+    editProfile(
         @AuthUser() authUser: User,
         @Args('input') editProfileInput: EditProfileInput
     ): Promise<EditProfileOutput> {
-        try {
-            await this.userService.editProfile(authUser.id, editProfileInput);
-            return { ok: true }
-        } catch(error) {
-            return { ok: false, error }
-        }
+        return this.userService.editProfile(authUser.id, editProfileInput);
     }
 
     @Mutation(returns => VerifyEmailOutput)
-    async verifyEmail(@Args('input') verifyEmailInput: VerifiyEmailInput): Promise<VerifyEmailOutput>{
-        try {
-            const result = await this.userService.verifyEmail(verifyEmailInput.code);
-            return {
-                ok: result
-            }
-        } catch(error) {
-            return { ok: false, error }
-        }
+    verifyEmail(@Args('input') verifyEmailInput: VerifiyEmailInput): Promise<VerifyEmailOutput>{
+        return this.userService.verifyEmail(verifyEmailInput.code);
     }
 
 }
