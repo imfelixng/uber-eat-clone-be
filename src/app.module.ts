@@ -8,7 +8,7 @@ import { UserModule } from './users/users.module';
 import { User } from './users/enities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
-import { EmailModule } from './email/email.module';
+import { MailModule } from './mail/mail.module';
 import { Verification } from './users/enities/verification.entity';
 
 @Module({
@@ -24,7 +24,10 @@ import { Verification } from './users/enities/verification.entity';
         DB_USERNAME: JoiString().required(),
         DB_PASSWORD: JoiString().required(),
         DB_NAME: JoiString().required(),
-        PRIVATE_KEY: JoiString().required()
+        PRIVATE_KEY: JoiString().required(),
+        MAILGUN_API_KEY: JoiString().required(),
+        MAILGUN_DOMAIN_NAME: JoiString().required(),
+        MAILGUN_FROM_EMAIL: JoiString().required()
       })
     }),
     TypeOrmModule.forRoot({
@@ -49,8 +52,12 @@ import { Verification } from './users/enities/verification.entity';
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY
     }),
+    MailModule.forRoot({
+      apiKey: process.env.MAILGUN_API_KEY,
+      domain: process.env.MAILGUN_DOMAIN_NAME,
+      fromEmail: process.env.MAILGUN_FROM_EMAIL,
+    }),
     UserModule,
-    EmailModule,
   ],
   controllers: [],
   providers: [],

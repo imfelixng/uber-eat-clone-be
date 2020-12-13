@@ -9,14 +9,16 @@ import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { JwtService } from 'src/jwt/jwt.service';
 import { EditProfileInput } from './dtos/edit-profile.dto';
 import { Verification } from './enities/verification.entity';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(User) private readonly users: Repository<User>,
         @InjectRepository(Verification) private readonly verifications: Repository<Verification>,
-        private readonly jwtService: JwtService
-    ) {}
+        private readonly jwtService: JwtService,
+        private readonly mailService: MailService
+    ) { }
 
     async createAccount({ email, password, role }: CreateAccountInput): Promise<CreateAccountOutput> {
         try {
@@ -34,9 +36,11 @@ export class UserService {
                 role
             }));
 
-            await this.verifications.save(this.verifications.create({
+            const verification = await this.verifications.save(this.verifications.create({
                 user
             }));
+
+            this.mailService.sendVerificationEmail(user.email, verification.code);
             return { ok: true };
         } catch (e) {
             return {
@@ -73,8 +77,8 @@ export class UserService {
         }
     }
 
-    async findById(id: number ): Promise<User> {
-        return this.users.findOne({id});
+    async findById(id: number): Promise<User> {
+        return this.users.findOne({ id });
     }
 
     async editProfile(userId: number, { email, password }: EditProfileInput): Promise<User> {
@@ -83,9 +87,10 @@ export class UserService {
         if (email) {
             user.email = email;
             user.verified = false;
-            await this.verifications.save(this.verifications.create({
+            const verification = await this.verifications.save(this.verifications.create({
                 user
             }));
+            this.mailService.sendVerificationEmail(user.email, verification.code);
         }
         if (password) {
             user.password = password;
